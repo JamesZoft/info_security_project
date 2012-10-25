@@ -2,6 +2,11 @@ package cs4520.server;
 
 import java.util.*;
 
+/**
+ * @author Oliver Maskery
+ *
+ * Class for managing user credentials in the system as well as performing validation
+ */
 public class UserManager {
 	public enum ValidationResult
 	{

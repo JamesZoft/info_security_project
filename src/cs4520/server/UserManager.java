@@ -7,13 +7,15 @@ public class UserManager {
 	{
 		ValidCredentials,
 		InvalidUsername,
-		InvalidSecret
+		InvalidSecret,
+		UserIsLocked
 	}
 	
-	private HashMap<String,String> mUsers = new HashMap<String,String>();
+	private HashMap<String,User> mUsers = new HashMap<String,User>();
 	
 	public UserManager()
 	{
+		mUsers.put("admin", new User("secretsecret"));
 	}
 	
 	/**
@@ -30,7 +32,7 @@ public class UserManager {
 		}
 		else
 		{
-			mUsers.put(_username, _secret);
+			mUsers.put(_username, new User(_secret));
 			return true;
 		}
 	}
@@ -56,10 +58,18 @@ public class UserManager {
 		if(!hasUser(_username))
 			return ValidationResult.InvalidUsername;
 		
-		String storedSecret = mUsers.get(_username);
+		User user = mUsers.get(_username);
+		
+		if(user.isLocked())
+			return ValidationResult.UserIsLocked;
+		
+		String storedSecret = user.getSecret();
 		
 		if(!storedSecret.equals(_secret))
+		{
+			user.incrementAttempts();
 			return ValidationResult.InvalidSecret;
+		}
 		
 		return ValidationResult.ValidCredentials;
 	}

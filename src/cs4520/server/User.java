@@ -12,7 +12,7 @@ public class User {
 	
 	private String secret;
 	private int loginAttempts = 0;
-	private final long timeout = 15*60;
+	private final long timeout = 15*60*1000;
 	private long lastTimeCheck = 0;
 	private boolean locked = false;
 	

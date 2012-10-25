@@ -15,6 +15,7 @@ public class Client {
 		Success,
 		IncorrectUsername,
 		IncorrectSecret,
+		UserIsLocked,
 		InvalidResponse
 	}
 	
@@ -94,6 +95,9 @@ public class Client {
 					case "InvalidSecret":
 						result = LoginResult.IncorrectSecret;
 						break;
+					case "UserIsLocked":
+						result = LoginResult.UserIsLocked;
+						break;
 					}
 				}
 			}
@@ -124,7 +128,7 @@ public class Client {
 	
 	public static void main(String[] args) {
 		// The login credentials to provide to the CS4520 server
-		final String username = "aadmin";
+		final String username = "admin";
 		final String secret = "secretsecret	";
 		
 		try {

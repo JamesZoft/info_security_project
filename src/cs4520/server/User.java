@@ -3,7 +3,6 @@ package cs4520.server;
 import java.util.Calendar;
 
 /**
- * 
  * @author James Reed
  *
  */
@@ -12,7 +11,7 @@ public class User {
 	
 	private String secret;
 	private int loginAttempts = 0;
-	private final long timeout = 15*60;
+	private final long timeout = 15*60*1000;
 	private long lastTimeCheck = 0;
 	private boolean locked = false;
 	
@@ -23,6 +22,7 @@ public class User {
 	
 	public void incrementAttempts()
 	{
+		System.out.println("login attempts" + loginAttempts);
 		if(loginAttempts == 3)
 		{
 			locked = true;

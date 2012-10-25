@@ -15,7 +15,8 @@ public class Client {
 		Success,
 		IncorrectUsername,
 		IncorrectSecret,
-		InvalidResponse
+		InvalidResponse,
+		UserIsLocked
 	}
 	
 	private BufferedReader mReader;		// used to read from the client socket
@@ -94,6 +95,9 @@ public class Client {
 					case "InvalidSecret":
 						result = LoginResult.IncorrectSecret;
 						break;
+					case "UserIsLocked":
+						result = LoginResult.UserIsLocked;
+						break;						
 					}
 				}
 			}
@@ -124,8 +128,8 @@ public class Client {
 	
 	public static void main(String[] args) {
 		// The login credentials to provide to the CS4520 server
-		final String username = "aadmin";
-		final String secret = "secretsecret	";
+		final String username = "admin";
+		final String secret = "secretsecretd";
 		
 		try {
 			// Connect

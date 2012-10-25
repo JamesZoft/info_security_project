@@ -11,6 +11,7 @@ import java.io.*;
  */
 public class Server {
 	private ArrayList<Connection> mConnections = new ArrayList<Connection>();	// array of current connections
+	private UserManager mUsers = new UserManager();								// user manager object for storing login credentials
 	private ServerSocket mServer;												// server socket for accepting connections
 	
 	/**
@@ -25,6 +26,9 @@ public class Server {
 		mServer = new ServerSocket(28000);
 		System.out.println("done");
 		
+		// for simplicity
+		mUsers.addUser("admin", "secretsecret");
+		
 		// Start accepting connections
 		System.out.println("Entering main accept loop...");
 		while(true)
@@ -32,7 +36,7 @@ public class Server {
 			// Accept a client
 			Socket client = mServer.accept();
 			// Wrap it in a Connection object
-			final Connection newConnection = new Connection(client);
+			final Connection newConnection = new Connection(client, mUsers);
 			
 			// Register for notification when the Connection is complete, so we can remove it from our list
 			newConnection.addListener(new CompletionListener() {

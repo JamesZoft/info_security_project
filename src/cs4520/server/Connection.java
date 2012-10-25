@@ -10,12 +10,7 @@ import java.io.*;
  * Object to handle a connection to the CS4520 server, handlers user login and serving of 'secret data'
  */
 public class Connection implements Runnable {
-	private enum ValidationResult
-	{
-		ValidCredentials,
-		InvalidUsername,
-		InvalidSecret
-	}
+	
 	
 	private static long mNextID = 1;	// static variable used to provide unique ID to each connection, in case that becomes useful
 	
@@ -23,6 +18,7 @@ public class Connection implements Runnable {
 	private ArrayList<CompletionListener> mListeners = new ArrayList<CompletionListener>();
 	private BufferedReader mReader;		// used for reading from the client socket
 	private PrintStream mWriter;		// used for writing to the client socket
+	private UserManager mUsers;			// reference to a UserManager for querying user credentials
 	private Socket mClient;				// socket connection to remote client
 	private Thread mThread;				// thread object for asynchronously handling client's requests
 	private long mID;					// this connection's unique ID
@@ -32,11 +28,13 @@ public class Connection implements Runnable {
 	 * @param _client The client that this connection represents
 	 * @throws IOException
 	 */
-	public Connection(Socket _client) throws IOException
+	public Connection(Socket _client, UserManager _users) throws IOException
 	{
 		// Create a thread to handle this Connection
 		mThread = new Thread(this);
 		mClient = _client;
+		// store reference to user manager
+		mUsers = _users;
 		// Allocate a unique ID to this connection
 		mID = mNextID ++;
 		
@@ -165,8 +163,8 @@ public class Connection implements Runnable {
 	private void validateLoginAttempt(String _username, String _secret)
 	{
 		// validate the credentials
-		ValidationResult result = validateLogin(_username, _secret);
-		boolean valid = (result == ValidationResult.ValidCredentials);
+		UserManager.ValidationResult result = mUsers.validateLogin(_username, _secret);
+		boolean valid = (result == UserManager.ValidationResult.ValidCredentials);
 		
 		String successString = valid? "successfully identified" : "failed to identify";
 		System.out.println(this.toString() + ": " + successString + " as '" + _username + "' with secret '" + _secret + "'");
@@ -183,22 +181,7 @@ public class Connection implements Runnable {
 		}
 	}
 	
-	/**
-	 * Helper method for doing login credential validation
-	 * @param _username The username provided
-	 * @param _secret The secret provided
-	 * @return The result of the validation attempt
-	 */
-	private ValidationResult validateLogin(String _username, String _secret)
-	{
-		if(!_username.equals("admin"))
-			return ValidationResult.InvalidUsername;
-		
-		if(!_secret.equals("secretsecret"))
-			return ValidationResult.InvalidSecret;
-		
-		return ValidationResult.ValidCredentials;
-	}
+	
 	
 	/**
 	 * Fetch the super secret data that must never be shared, it contains many secrets. Deep, dark secrets. So secret, and meaningful.
@@ -217,6 +200,11 @@ public class Connection implements Runnable {
 		}
 		
 		return secretData;
+	}
+	
+	public String ip()
+	{
+		return ((InetSocketAddress) mClient.getRemoteSocketAddress()).getHostString();
 	}
 	
 	@Override

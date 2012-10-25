@@ -3,7 +3,6 @@ package cs4520.server;
 import java.util.Calendar;
 
 /**
- * 
  * @author James Reed
  *
  */
@@ -23,6 +22,7 @@ public class User {
 	
 	public void incrementAttempts()
 	{
+		System.out.println("login attempts" + loginAttempts);
 		if(loginAttempts == 3)
 		{
 			locked = true;

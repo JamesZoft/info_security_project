@@ -4,6 +4,9 @@ import java.net.*;
 import java.util.ArrayList;
 import java.io.*;
 
+import javax.net.ssl.*;
+
+
 /**
  * @author Oliver Maskery
  *
@@ -12,7 +15,7 @@ import java.io.*;
 public class Server {
 	private ArrayList<Connection> mConnections = new ArrayList<Connection>();	// array of current connections
 	private UserManager mUsers = new UserManager();								// user manager object for storing login credentials
-	private ServerSocket mServer;												// server socket for accepting connections
+	private SSLServerSocket mServer;												// server socket for accepting connections
 	
 	/**
 	 * Server constructor
@@ -23,7 +26,7 @@ public class Server {
 	{
 		// Start the server
 		System.out.print("Starting server for CS4520 coursework...");
-		mServer = new ServerSocket(28000);
+		mServer = (SSLServerSocket) SSLServerSocketFactory.getDefault().createServerSocket(28000);
 		System.out.println("done");
 		
 		// for simplicity
@@ -37,7 +40,6 @@ public class Server {
 			Socket client = mServer.accept();
 			// Wrap it in a Connection object
 			final Connection newConnection = new Connection(client, mUsers);
-			
 			// Register for notification when the Connection is complete, so we can remove it from our list
 			newConnection.addListener(new CompletionListener() {
 				public void onCompletion(Object _sender) {

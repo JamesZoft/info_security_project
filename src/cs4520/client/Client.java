@@ -2,6 +2,7 @@ package cs4520.client;
 
 import java.net.*;
 import java.io.*;
+import javax.net.ssl.*;
 
 /**
  * @author Oliver Maskery
@@ -23,7 +24,6 @@ public class Client {
 	private PrintStream mWriter;		// used to write to the client socket
 	private String mSecret;				// the secret data we've acquired from the server, initially null
 	private Socket mClient;				// the client socket to communicate with the server
-	
 	/**
 	 * Client constructor
 	 * @param _target The target to connect to, either an IP or hostname for the machine running the CS4520 server.
@@ -35,7 +35,7 @@ public class Client {
 	{
 		mSecret = null;
 		// establish a connection to the server, generally initialise the connection
-		mClient = new Socket(_target, _port);
+		mClient = SSLSocketFactory.getDefault().createSocket(_target, _port);
 		mReader = new BufferedReader(new InputStreamReader(mClient.getInputStream()));
 		mWriter = new PrintStream(mClient.getOutputStream());
 	}

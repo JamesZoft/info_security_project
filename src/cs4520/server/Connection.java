@@ -121,7 +121,8 @@ public class Connection implements Runnable {
 		// Start a conversation with the client
 		Conversation loginUsername = createLoginConversation();
 		// Expect the client to send the first message message
-		loginUsername.expect();
+		loginUsername.expect(); //change to start, send public key to client
+		
 	}
 	
 	/**

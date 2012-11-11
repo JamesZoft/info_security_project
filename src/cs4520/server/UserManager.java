@@ -34,7 +34,7 @@ public class UserManager {
 		}
 		else
 		{
-			mUsers.put(_username, new User(_username, _secret));
+			mUsers.put(_username, new User(_username, new UserSecret(_secret)));
 			return true;
 		}
 	}
@@ -65,9 +65,9 @@ public class UserManager {
 		if(user.isLocked())
 			return ValidationResult.UserIsLocked;
 		
-		String storedSecret = user.secret();
+		UserSecret storedSecret = user.secret();
 		
-		if(!storedSecret.equals(_secret))
+		if(!storedSecret.checkSecret(_secret))
 		{
 			user.incrementAttempts();
 			return ValidationResult.InvalidSecret;

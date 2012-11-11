@@ -2,6 +2,7 @@ package cs4520.server;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.*;
+import java.util.Arrays;
 import java.util.Random;
 
 import javax.crypto.spec.*;
@@ -53,7 +54,7 @@ public class UserSecret {
 		// generate a hash using the provided secret and the stored salt
 		byte[] generated = generateHash(_secret, mSalt);
 		// if the generated hash matches our stored hash, it is the correct secret
-		return (generated.equals(mHash));
+		return Arrays.equals(mHash, generated);
 	}
 	
 	/**

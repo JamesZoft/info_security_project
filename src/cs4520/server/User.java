@@ -14,15 +14,15 @@ public class User {
 	private int mLoginAttempts;					// Number of times user has tried to login
 	private boolean mLocked;					// Variable set to true if user is locked from attempting to log in
 	
+	private UserSecret mSecret;					// The user's password
 	private String mUsername;					// The user's username
-	private String mSecret;						// The user's password
 	
 	/**
 	 * Constructor for the User object
 	 * @param _username The user's username
 	 * @param _secret The user's password or "secret"
 	 */
-	public User(String _username, String _secret)
+	public User(String _username, UserSecret _secret)
 	{
 		mLastTimeCheck = 0;
 		mLoginAttempts = 0;
@@ -75,7 +75,7 @@ public class User {
 	 * Method to get the secret of the user
 	 * @return A String, the value of which is the user's secret
 	 */
-	public String secret()
+	public UserSecret secret()
 	{
 		return mSecret;
 	}

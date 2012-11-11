@@ -129,7 +129,7 @@ public class Client {
 	public static void main(String[] args) {
 		// The login credentials to provide to the CS4520 server
 		final String username = "admin";
-		final String secret = "secretsecretd";
+		final String secret = "secretsecret";
 		
 		try {
 			// Connect

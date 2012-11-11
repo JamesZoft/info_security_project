@@ -2,6 +2,11 @@ package cs4520.server;
 
 import java.util.*;
 
+/**
+ * @author Oliver Maskery
+ *
+ * Class for managing user credentials in the system as well as performing validation
+ */
 public class UserManager {
 	public enum ValidationResult
 	{
@@ -13,10 +18,7 @@ public class UserManager {
 	
 	private HashMap<String,User> mUsers = new HashMap<String,User>();
 	
-	public UserManager()
-	{
-		mUsers.put("admin", new User("secretsecret"));
-	}
+	public UserManager() { }
 	
 	/**
 	 * Method for adding new users to the UserManager
@@ -32,7 +34,7 @@ public class UserManager {
 		}
 		else
 		{
-			mUsers.put(_username, new User(_secret));
+			mUsers.put(_username, new User(_username, new UserSecret(_secret)));
 			return true;
 		}
 	}
@@ -63,9 +65,9 @@ public class UserManager {
 		if(user.isLocked())
 			return ValidationResult.UserIsLocked;
 		
-		String storedSecret = user.getSecret();
+		UserSecret storedSecret = user.secret();
 		
-		if(!storedSecret.equals(_secret))
+		if(!storedSecret.checkSecret(_secret))
 		{
 			user.incrementAttempts();
 			return ValidationResult.InvalidSecret;

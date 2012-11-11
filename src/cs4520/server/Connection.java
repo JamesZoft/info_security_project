@@ -11,7 +11,6 @@ import java.io.*;
  */
 public class Connection implements Runnable {
 	
-	
 	private static long mNextID = 1;	// static variable used to provide unique ID to each connection, in case that becomes useful
 	
 	// list of all external objects awaiting notification of this Connection's completion

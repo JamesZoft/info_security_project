@@ -6,19 +6,30 @@ import java.util.Calendar;
  * @author James Reed
  *
  */
-
 public class User {
+	private final long Timeout = 15*60*1000;	// The timeout used to block multiple logins after max login attempts
+	private final int MaxLoginAttempts = 3;		// Max login attempts allowed before blocking the user
 	
-	private String secret;						// The user's password
-	private int loginAttempts = 0;				// Number of times user has tried to login
-	private final long timeout = 15*60*1000;	// The timeout used to block multiple logins after max login attempts
-	private final int maxLoginAttempts = 3;		// Max login attempts allowed before blocking the user
-	private long lastTimeCheck = 0;				// Variable to help check whether user's timeout has ended yet
-	private boolean locked = false;				// Variable set to true if user is locked from attempting to log in
+	private long mLastTimeCheck;				// Variable to help check whether user's timeout has ended yet
+	private int mLoginAttempts;					// Number of times user has tried to login
+	private boolean mLocked;					// Variable set to true if user is locked from attempting to log in
 	
-	public User(String secret)
+	private String mUsername;					// The user's username
+	private String mSecret;						// The user's password
+	
+	/**
+	 * Constructor for the User object
+	 * @param _username The user's username
+	 * @param _secret The user's password or "secret"
+	 */
+	public User(String _username, String _secret)
 	{
-		this.secret = secret;
+		mLastTimeCheck = 0;
+		mLoginAttempts = 0;
+		mLocked = false;
+		
+		mUsername = _username;
+		mSecret = _secret;
 	}
 	
 	/**
@@ -27,14 +38,14 @@ public class User {
 	 */
 	public void incrementAttempts()
 	{
-		System.out.println("login attempts" + loginAttempts);
-		if(loginAttempts == maxLoginAttempts)
+		System.out.println("login attempts" + mLoginAttempts);
+		if(mLoginAttempts == MaxLoginAttempts)
 		{
-			locked = true;
-			lastTimeCheck = Calendar.getInstance().getTimeInMillis();
+			mLocked = true;
+			mLastTimeCheck = Calendar.getInstance().getTimeInMillis();
 		}
 		else
-			loginAttempts++;
+			mLoginAttempts++;
 	}
 	
 	/**
@@ -43,30 +54,38 @@ public class User {
 	 */
 	public boolean isLocked()
 	{
-		if(locked && ((Calendar.getInstance().getTimeInMillis() - lastTimeCheck) > timeout))
+		if(mLocked && ((Calendar.getInstance().getTimeInMillis() - mLastTimeCheck) > Timeout))
 		{
-			locked = false;
-			loginAttempts = 0;
+			mLocked = false;
+			mLoginAttempts = 0;
 		}
-		return locked;
+		return mLocked;
 	}
 	
 	/**
 	 * Method to get the number of failed login attempts the user has
 	 * @return An int which describes the number of failed login attempts the user has
 	 */
-	public int getAttempts()
+	public int attempts()
 	{
-		return loginAttempts;
+		return mLoginAttempts;
 	}
 
 	/**
 	 * Method to get the secret of the user
 	 * @return A String, the value of which is the user's secret
 	 */
-	public String getSecret()
+	public String secret()
 	{
-		return secret;
+		return mSecret;
 	}
 
+	/**
+	 * Getter method for retrieving the user's username
+	 * @return The user's username as a String
+	 */
+	public String username()
+	{
+		return mUsername;
+	}
 }

@@ -18,10 +18,7 @@ public class UserManager {
 	
 	private HashMap<String,User> mUsers = new HashMap<String,User>();
 	
-	public UserManager()
-	{
-		mUsers.put("admin", new User("secretsecret"));
-	}
+	public UserManager() { }
 	
 	/**
 	 * Method for adding new users to the UserManager
@@ -37,7 +34,7 @@ public class UserManager {
 		}
 		else
 		{
-			mUsers.put(_username, new User(_secret));
+			mUsers.put(_username, new User(_username, _secret));
 			return true;
 		}
 	}
@@ -68,7 +65,7 @@ public class UserManager {
 		if(user.isLocked())
 			return ValidationResult.UserIsLocked;
 		
-		String storedSecret = user.getSecret();
+		String storedSecret = user.secret();
 		
 		if(!storedSecret.equals(_secret))
 		{

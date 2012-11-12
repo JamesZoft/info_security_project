@@ -26,7 +26,7 @@ public class Server {
 	{
 		// Start the server
 		System.out.print("Starting server for CS4520 coursework...");
-		mServer = (SSLServerSocket) SSLServerSocketFactory.getDefault().createServerSocket(28000);
+		mServer = (SSLServerSocket) SSLServerSocketFactory.getDefault().createServerSocket(_port);
 		System.out.println("done");
 		
 		// for simplicity

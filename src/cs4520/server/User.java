@@ -7,6 +7,13 @@ import java.util.Calendar;
  *
  */
 public class User {
+	public enum Level
+	{
+		Guest,
+		User,
+		Administrator
+	}
+	
 	private final long Timeout = 15*60*1000;	// The timeout used to block multiple logins after max login attempts
 	private final int MaxLoginAttempts = 3;		// Max login attempts allowed before blocking the user
 	
@@ -16,13 +23,15 @@ public class User {
 	
 	private UserSecret mSecret;					// The user's password
 	private String mUsername;					// The user's username
+	private Level mLevel;
 	
 	/**
 	 * Constructor for the User object
 	 * @param _username The user's username
 	 * @param _secret The user's password or "secret"
+	 * @param _level The user's level in terms of access privelages
 	 */
-	public User(String _username, UserSecret _secret)
+	public User(String _username, UserSecret _secret, Level _level)
 	{
 		mLastTimeCheck = 0;
 		mLoginAttempts = 0;
@@ -30,6 +39,7 @@ public class User {
 		
 		mUsername = _username;
 		mSecret = _secret;
+		mLevel = _level;
 	}
 	
 	/**
@@ -87,5 +97,14 @@ public class User {
 	public String username()
 	{
 		return mUsername;
+	}
+	
+	/**
+	 * Getter method for retrieving the user's level, such as whether or not they are administrator
+	 * @return The user's user-level
+	 */
+	public Level level()
+	{
+		return mLevel;
 	}
 }

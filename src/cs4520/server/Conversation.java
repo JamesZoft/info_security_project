@@ -45,4 +45,13 @@ public class Conversation {
 		if(mListener != null)
 			mListener.onResponse(this, response);
 	}
+	
+	/**
+	 * Getter method for the clients name used to prettify debug statements with the clients ID and IP.
+	 * @return A string representation of the client for debug output purposes
+	 */
+	public String tagname()
+	{
+		return mClient.toString();
+	}
 }

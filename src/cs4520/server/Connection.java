@@ -150,7 +150,12 @@ public class Connection implements Runnable {
 	{
 		return new Conversation(this, new ResponseListener() {
 			public void onResponse(Conversation _conversation, String _message) throws IOException {
-				validateLoginAttempt(_username, _message);
+				Conversation query = validateLoginAttempt(_username, _message);
+				
+				if(query != null)
+				{
+					query.expect();
+				}
 			}
 		});
 	}
@@ -160,7 +165,7 @@ public class Connection implements Runnable {
 	 * @param _username The username provided by the client
 	 * @param _secret The secret provided by the client
 	 */
-	private void validateLoginAttempt(String _username, String _secret)
+	private Conversation validateLoginAttempt(String _username, String _secret)
 	{
 		// validate the credentials
 		UserManager.ValidationResult result = mUsers.validateLogin(_username, _secret);
@@ -169,19 +174,86 @@ public class Connection implements Runnable {
 		String successString = valid? "successfully identified" : "failed to identify";
 		System.out.println(this.toString() + ": " + successString + " as '" + _username + "' with secret '" + _secret + "'");
 		
+		Conversation nextConversation = null;
+		
 		if(valid)
 		{
-			// tell the client they were successful, include the secret data
-			tx("valid:secret_data=" + getSecretData());
+			User user = mUsers.getUser(_username);
+			// tell the client they were successful, include their privelage level
+			tx("valid:level=" + user.level().toString());
+			
+			nextConversation = handleValidatedRequest(user);
 		}
 		else
 		{
 			// tell the client they failed to login, provide the reason
 			tx("invalid:reason=" + result.toString());
 		}
+		
+		return nextConversation;
 	}
 	
-	
+	/**
+	 * Method that handles a request from a validated (logged in) user
+	 * @param _user The user that is making this request
+	 * @return The conversation object that will handle the request
+	 */
+	private Conversation handleValidatedRequest(final User _user)
+	{
+		return new Conversation(this, new ResponseListener() {
+			public void onResponse(Conversation _conversation, String _response) throws IOException {
+				String[] tokens = _response.split(" ");
+				String handled = null;
+				
+				if(tokens.length < 1)
+				{
+					tx("invalid:reason=MalformedRequest");
+					return;
+				}
+				
+				handled = tokens[0].toLowerCase();
+				switch(handled)
+				{
+				case "fact":
+					tx("ack:fact=this_is_the_best_program_ever");
+					break;
+				case "secret":
+					if(_user.level() == User.Level.User || _user.level() == User.Level.Administrator)
+					{
+						tx("ack:secret=" + getSecretData());
+					}
+					else
+					{
+						tx("invalid:reason=PermissionDenied");
+					}
+					break;
+				case "users":
+					if(_user.level() == User.Level.Administrator)
+					{
+						tx("ack:users=" + mUsers.getUserData());
+					}
+					else
+					{
+						tx("invalid:reason=PermissionDenied");
+					}
+					break;
+				default:
+					tx("invalid:reason=InvalidRequest");
+					handled = null;
+					break;
+				}
+				
+				if(handled != null)
+				{
+					System.out.println(_conversation.tagname() + ": served '" + handled + "' query");
+				}
+				else
+				{
+					System.out.println(_conversation.tagname() + ": rejected invalid '" + tokens[0] + "' query");
+				}
+			}
+		});
+	}
 	
 	/**
 	 * Fetch the super secret data that must never be shared, it contains many secrets. Deep, dark secrets. So secret, and meaningful.

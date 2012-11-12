@@ -30,7 +30,9 @@ public class Server {
 		System.out.println("done");
 		
 		// for simplicity
-		mUsers.addUser("admin", "secretsecret");
+		mUsers.addUser("guest", "meow", User.Level.Guest);
+		mUsers.addUser("rolfharris", "canyoutellwhatitisyet", User.Level.User);
+		mUsers.addUser("admin", "secretsecret", User.Level.Administrator);
 		
 		// Start accepting connections
 		System.out.println("Entering main accept loop...");

@@ -1,5 +1,6 @@
 package cs4520.server;
 
+import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.*;
 import java.util.Arrays;
@@ -55,6 +56,17 @@ public class UserSecret {
 		byte[] generated = generateHash(_secret, mSalt);
 		// if the generated hash matches our stored hash, it is the correct secret
 		return Arrays.equals(mHash, generated);
+	}
+	
+	/**
+	 * String method for converting this object to a String representation
+	 * @return The string representation of the secret
+	 */
+	@Override
+	public String toString()
+	{
+		BigInteger bi = new BigInteger(1, mHash);
+	    return String.format("%0" + (mHash.length << 1) + "X", bi);
 	}
 	
 	/**

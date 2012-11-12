@@ -11,8 +11,8 @@ public class UserManager {
 	public enum ValidationResult
 	{
 		ValidCredentials,
-		InvalidUsername,
-		InvalidSecret,
+		IncorrectUsername,
+		IncorrectSecret,
 		UserIsLocked
 	}
 	
@@ -26,7 +26,7 @@ public class UserManager {
 	 * @param _secret The user's "secret" for logging in
 	 * @return Whether or not the user was successfully added, false if the username is already in use
 	 */
-	public boolean addUser(String _username, String _secret)
+	public boolean addUser(String _username, String _secret, User.Level _level)
 	{
 		if(mUsers.containsKey(_username))
 		{
@@ -34,7 +34,7 @@ public class UserManager {
 		}
 		else
 		{
-			mUsers.put(_username, new User(_username, new UserSecret(_secret)));
+			mUsers.put(_username, new User(_username, new UserSecret(_secret), _level));
 			return true;
 		}
 	}
@@ -58,7 +58,7 @@ public class UserManager {
 	public ValidationResult validateLogin(String _username, String _secret)
 	{
 		if(!hasUser(_username))
-			return ValidationResult.InvalidUsername;
+			return ValidationResult.IncorrectUsername;
 		
 		User user = mUsers.get(_username);
 		
@@ -70,9 +70,39 @@ public class UserManager {
 		if(!storedSecret.checkSecret(_secret))
 		{
 			user.incrementAttempts();
-			return ValidationResult.InvalidSecret;
+			return ValidationResult.IncorrectSecret;
 		}
 		
 		return ValidationResult.ValidCredentials;
+	}
+	
+	/**
+	 * Fetches a user from the User Manager, returns null if not a valid username
+	 * @param _username The username to search for
+	 * @return The User object requested or null if such a user does not exist
+	 */
+	public User getUser(String _username)
+	{
+		return mUsers.get(_username);
+	}
+	
+	/**
+	 * Fetch the entire user information database as a string including the usernames and passwords
+	 * @return The user database contents as a string
+	 */
+	public String getUserData()
+	{
+		boolean first = true;
+		
+		String result = "";
+		result += "[";
+		for(User user : mUsers.values())
+		{
+			if(!first) result += ",";
+			first = false;
+			result += user.username() + "|" + user.secret().toString();
+		}
+		result += "]";
+		return result;
 	}
 }
